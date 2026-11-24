@@ -1,0 +1,22 @@
+name: PR Tests
+on:
+  pull_request_target:
+    types: [synchronize, labeled]
+permissions:
+  contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+jobs:
+  gatekeeper:
+    runs-on: ubuntu-latest
+    steps:
+      - name: gate
+        run: |
+          echo "event=${{ github.event_name }} action=${{ github.event.action }} head_ref=${{ github.head_ref }}"
+          sleep 240
+  suite:
+    if: ${{ github.event.label.name == 'never' }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "suite would run PR head here"
